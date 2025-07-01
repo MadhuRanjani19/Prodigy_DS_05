@@ -12,17 +12,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from wordcloud import WordCloud
 
-# Load the dataset
 df = pd.read_csv('/content/output.csv')  # Adjust path if needed
 
-# Show column names for reference
 print("Columns:", df.columns.tolist())
 
-# Optional: convert 'Time' column to datetime if it exists
+
 if 'Time' in df.columns:
     df['Hour'] = pd.to_datetime(df['Time'], errors='coerce').dt.hour
 
-# === 1. Accidents by Hour of Day ===
+
 if 'Hour' in df.columns:
     plt.figure(figsize=(10, 5))
     sns.histplot(df['Hour'].dropna(), bins=24, kde=False, color='tomato')
@@ -32,7 +30,7 @@ if 'Hour' in df.columns:
     plt.grid(True, linestyle='--', alpha=0.4)
     plt.show()
 
-# === 2. Accidents by Weather Condition ===
+
 if 'Weather_Condition' in df.columns:
     plt.figure(figsize=(12, 6))
     top_weather = df['Weather_Condition'].value_counts().nlargest(10)
@@ -42,7 +40,7 @@ if 'Weather_Condition' in df.columns:
     plt.ylabel('Weather Condition')
     plt.show()
 
-# === 3. Accidents by Road Condition ===
+
 road_columns = [col for col in df.columns if 'Road' in col and 'Condition' in col]
 for col in road_columns:
     plt.figure(figsize=(10, 4))
@@ -52,7 +50,7 @@ for col in road_columns:
     plt.tight_layout()
     plt.show()
 
-# === 4. Accident Hotspots (Requires Latitude and Longitude) ===
+
 if {'Latitude', 'Longitude'}.issubset(df.columns):
     plt.figure(figsize=(8, 6))
     sns.scatterplot(data=df, x='Longitude', y='Latitude', alpha=0.3, s=10, color='red')
@@ -65,7 +63,7 @@ if {'Latitude', 'Longitude'}.issubset(df.columns):
 else:
     print("No Latitude/Longitude columns found for hotspot visualization.")
 
-# === 5. Word Cloud of Accident Descriptions (Optional) ===
+
 if 'Description' in df.columns:
     all_text = ' '.join(df['Description'].dropna().astype(str))
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(all_text)
